@@ -1,6 +1,6 @@
 package dev.neddslayer.sharedhealth.components;
 
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.scoreboard.Scoreboard;
 
 public class SharedHungerComponent implements IHungerComponent {
@@ -24,12 +24,12 @@ public class SharedHungerComponent implements IHungerComponent {
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(CompoundTag tag) {
         this.hunger = tag.getInt("Hunger");
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(CompoundTag tag) {
         tag.putInt("Hunger", this.hunger);
     }
 }

@@ -22,7 +22,7 @@ public class HungerManagerMixin {
 
 	@Shadow public float exhaustion;
 
-	@Shadow private int foodTickTimer;
+	@Shadow private int foodStarvationTimer;
 
 	@Shadow private float foodSaturationLevel;
 
@@ -70,7 +70,7 @@ public class HungerManagerMixin {
 			float exhaustion = exhaustionComponent.getExhaustion();
 			float saturation = saturationComponent.getSaturation();
 			if (this.exhaustion == exhaustion) {
-				if (this.foodTickTimer < 80 && this.foodTickTimer >= 10) {
+				if (this.foodStarvationTimer < 80 && this.foodStarvationTimer >= 10) {
 					float f = Math.min(saturation, 6.0F);
 					exhaustionComponent.setExhaustion(Math.max(exhaustion + f, 0.0f));
 				} else {

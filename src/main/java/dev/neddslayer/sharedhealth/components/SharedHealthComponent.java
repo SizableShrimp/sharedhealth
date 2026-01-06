@@ -1,6 +1,6 @@
 package dev.neddslayer.sharedhealth.components;
 
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.scoreboard.Scoreboard;
 
 public class SharedHealthComponent implements IHealthComponent {
@@ -24,12 +24,12 @@ public class SharedHealthComponent implements IHealthComponent {
     }
 
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(CompoundTag tag) {
         this.health = tag.getFloat("playerHealth");
     }
 
     @Override
-    public void writeToNbt(NbtCompound tag) {
+    public void writeToNbt(CompoundTag tag) {
         tag.putFloat("playerHealth", this.health);
     }
 }

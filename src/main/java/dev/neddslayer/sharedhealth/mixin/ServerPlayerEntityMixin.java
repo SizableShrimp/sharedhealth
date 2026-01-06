@@ -1,8 +1,8 @@
 package dev.neddslayer.sharedhealth.mixin;
 
 import com.mojang.authlib.GameProfile;
+import dev.neddslayer.sharedhealth.SharedHealth;
 import dev.neddslayer.sharedhealth.components.SharedHealthComponent;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -24,30 +24,34 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
     @Shadow
     public abstract boolean damage(DamageSource source, float amount);
 
-	@Shadow public abstract ServerWorld getServerWorld();
+    @Shadow
+    public abstract ServerWorld getServerWorld();
 
-	public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
-        super(world, pos, yaw, gameProfile);
+    private ServerPlayerEntityMixin(World world, BlockPos pos, GameProfile gameProfile) {
+        super(world, pos, gameProfile);
     }
 
     @Inject(method = "damage", at = @At("RETURN"))
     public void damageListener(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-		// ensure that damage is only taken if the damage listener is handled; you shouldn't be able to punch invulnerable players, etc.
-		if (cir.getReturnValue() && this.isAlive()) {
-			float currentHealth = this.getHealth();
-			SharedHealthComponent component = SHARED_HEALTH.get(this.getScoreboard());
-			float knownHealth = component.getHealth();
-			if (currentHealth != knownHealth) {
-				component.setHealth(currentHealth);
-			}
-		}
+        // ensure that damage is only taken if the damage listener is handled; you shouldn't be able to punch invulnerable players, etc.
+        if (cir.getReturnValue() && this.isAlive()) {
+            float currentHealth = this.getHealth();
+            SharedHealthComponent component = SHARED_HEALTH.get(this.getScoreboard());
+            float knownHealth = component.getHealth();
+            if (currentHealth != knownHealth) {
+                component.setHealth(currentHealth);
+            }
+        }
     }
 
     @Inject(method = "onDeath", at = @At("TAIL"))
     public void killEveryoneOnDeath(DamageSource damageSource, CallbackInfo ci) {
-	    this.getServerWorld().getPlayers().forEach(LivingEntity::kill);
+        this.getServerWorld().getPlayers().forEach(le -> {
+            if (le != (Object) this)
+                le.damage(new SharedHealth.SharedDeathSource(this), Float.MAX_VALUE);
+        });
         SHARED_HEALTH.get(this.getScoreboard()).setHealth(20.0f);
         SHARED_HUNGER.get(this.getScoreboard()).setHunger(20);
-		SHARED_SATURATION.get(this.getScoreboard()).setSaturation(20.0f);
+        SHARED_SATURATION.get(this.getScoreboard()).setSaturation(5.0F);
     }
 }

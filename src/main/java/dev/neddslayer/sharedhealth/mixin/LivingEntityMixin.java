@@ -16,9 +16,6 @@ import static dev.neddslayer.sharedhealth.components.SharedComponentsInitializer
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
-
-    @Shadow public abstract boolean isAlive();
-
     public LivingEntityMixin(EntityType<?> type, World world) {
         super(type, world);
     }
