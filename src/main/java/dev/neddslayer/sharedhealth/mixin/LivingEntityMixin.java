@@ -22,7 +22,8 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "heal", at=@At("HEAD"))
     public void healListener(float amount, CallbackInfo ci) {
-        if ((LivingEntity) (Object) this instanceof ServerPlayerEntity player && this.isAlive()) {
+        if ((LivingEntity) (Object) this instanceof ServerPlayerEntity && this.isAlive()) {
+            ServerPlayerEntity player = (ServerPlayerEntity) (Object) this;
             float currentHealth = player.getHealth();
             SharedHealthComponent component = SHARED_HEALTH.get(player.getScoreboard());
             float knownHealth = component.getHealth();
