@@ -38,16 +38,18 @@ public abstract class PlayerEntityMixin extends LivingEntity {
     @Inject(method = "eatFood", at = @At("HEAD"))
     public void eatFood(World world, ItemStack stack, CallbackInfoReturnable<ItemStack> cir) {
         if (!world.isClient && stack.getItem().isFood()) {
-            FoodComponent foodComponent = stack.getItem().getFoodComponent();
             SharedHungerComponent hungerComponent = SHARED_HUNGER.get(Objects.requireNonNull(this.getServer()).getScoreboard());
 	        SharedSaturationComponent saturationComponent = SHARED_SATURATION.get(Objects.requireNonNull(this.getServer()).getScoreboard());
+
+            FoodComponent foodComponent = stack.getItem().getFoodComponent();
             int hunger = hungerComponent.getHunger();
 			float saturation = saturationComponent.getSaturation();
+
             if (this.getHungerManager().getFoodLevel() == hunger && foodComponent != null) {
                 hungerComponent.setHunger(Math.max(this.getHungerManager().getFoodLevel() + foodComponent.getHunger(), 0));
             }
 			if (this.getHungerManager().getSaturationLevel() == saturation && foodComponent != null) {
-				saturationComponent.setSaturation(Math.min(saturation + (float)foodComponent.getHunger() * foodComponent.getSaturationModifier() * 2.0F, (float)hungerComponent.getHunger()));
+				saturationComponent.setSaturation(Math.min(saturation + ((float) foodComponent.getHunger()) * foodComponent.getSaturationModifier() * 2.0F, (float) hunger));
 			}
         }
     }

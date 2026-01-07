@@ -25,7 +25,7 @@ public class SharedHungerComponent implements IHungerComponent {
 
     @Override
     public void readFromNbt(CompoundTag tag) {
-        this.hunger = tag.getInt("Hunger");
+        this.hunger = tag.contains("Hunger", 99) ? tag.getInt("Hunger") : 20;
     }
 
     @Override
